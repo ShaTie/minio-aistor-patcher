@@ -14,11 +14,9 @@ jobs:
       - id: detect
         name: Read architectures from the pinned manifest
         run: |
-          ref=$(grep -E '^FROM quay\.io/kmsuk161/aistor' Dockerfile | tail -1 | awk '{print $2}')
+          ref=$(grep -E '^FROM quay\.io/minio/aistor/minio' Dockerfile | tail -1 | awk '{print $2}')
           echo "base ref: $ref"
-          # .Image is the config map for a multi-arch index (keys "os/arch", with
-          # attestation manifests already excluded) and the bare config for a
-          # single-arch image.
+
           img=$(docker buildx imagetools inspect "$ref" --format '{{json .Image}}')
           mapfile -t plats < <(echo "$img" \
             | jq -r 'if has("architecture") then "\(.os)/\(.architecture)" else keys[] end' \
